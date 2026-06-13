@@ -1,0 +1,26 @@
+services:
+  sync-server:
+    build:
+      context: .
+      args:
+        LIB_VERSION: "^0.2.0"
+    container_name: sync-server
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - user_data:/data/users
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  user_data:
